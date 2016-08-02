@@ -5,7 +5,7 @@ var redisClient = redis.createClient();
 var async = require('async');
 var _ = require('lodash');
 
-var url = "http://www.modelmayhem.com/browse/any/us/all/all{{page_no}}?fm_action=search&show_advanced=0&artist_type%5B%5D=&member_name=&display=details&sort_by=2&country=US&state=&city=&zipcode=&radius=&submit='";
+var url = "http://www.modelmayhem.com/browse/any/all/all/all{{page_no}}?fm_action=search&show_advanced=0&artist_type%5B%5D=&member_name=&display=details&sort_by=2&country=&state=&city=&zipcode=&radius=&submit='";
 var searchPageRegex =/<td class="bAvatar">\W*a href="\/(\d*)/g;
 var userListKey = "USER_LIST";
 function extractEmails ( text ){
@@ -50,7 +50,7 @@ function fetchSearchPage(pageNo){
 }
 
 function fetchUserPage(userId){
-	console.log("Fetching user===> ", userId);
+	//console.log("Fetching user===> ", userId);
 	var requiredUrl = "www.modelmayhem.com/"+ userId;
 	var curl = new Curl();
 	curl.setOpt( Curl.option.URL , requiredUrl );
@@ -83,6 +83,7 @@ function fetchUserPage(userId){
 
 function startPageSearching(pageNo){
 	return fetchSearchPage(pageNo).then(function(body){
+		//console.log(body);
 		var isMatching = searchPageRegex.exec(body);
 		var limit = 0;
 		var tempCache = [];
@@ -145,10 +146,10 @@ function fetchUserFunction(userId, callback){
 			}
 		});
 		if(requiredEmail.length > 0){
-			console.log("Email Found => ",requiredEmail);
+		//	console.log("Email Found => ",requiredEmail);
 			callback(null, [userId, requiredEmail] );
 		}else{
-			console.log("No Email found");
+		//	console.log("No Email found");
 			callback(null, null);
 		}
 	}).catch(function(error){
@@ -156,8 +157,12 @@ function fetchUserFunction(userId, callback){
 	});
 }
 
-startPageSearching(0);
-
+var start = 0;
+if(process.argv.length > 1){
+	start = process.argv[2];
+	start = parseInt(start);
+}
+startPageSearching(start);
 // fetchUserFunction(3946270);
 
 
