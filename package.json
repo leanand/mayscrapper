@@ -1,0 +1,26 @@
+{
+  "name": "mayscrapper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leanand/mayscrapper.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/leanand/mayscrapper/issues"
+  },
+  "homepage": "https://github.com/leanand/mayscrapper#readme",
+  "dependencies": {
+    "async": "^2.0.1",
+    "cheerio": "^0.20.0",
+    "lodash": "^4.14.1",
+    "node-libcurl": "^1.0.0",
+    "redis": "^2.6.2"
+  }
+}
