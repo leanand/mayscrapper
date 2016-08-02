@@ -94,9 +94,9 @@ function startPageSearching(pageNo){
 		console.log("Page completed ====>", pageNo , limit);
 		// pushToRedisUser(tempCache);
 		async.mapSeries(tempCache, fetchUserFunction, function(error, data){
-			if(data.length > 0){
-				var requiredData = _.compact(data);
+			var requiredData = _.compact(data);
 				requiredData = _.flatten(requiredData);	
+			if(requiredData.length > 0){
 				console.log(requiredData);
 				redisClient.hmset("REQUIRED_EMAILS", requiredData);
 				redisClient.set("LAST_PAGE", pageNo, function(error){
