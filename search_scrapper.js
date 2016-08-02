@@ -92,7 +92,7 @@ function startPageSearching(pageNo){
 			limit ++;
 		}
 		console.log("Page completed ====>", pageNo , limit);
-		pushToRedisUser(tempCache);
+		// pushToRedisUser(tempCache);
 		async.mapSeries(tempCache, fetchUserFunction, function(error, data){
 			if(data.length > 0){
 				var requiredData = _.compact(data);
@@ -100,7 +100,7 @@ function startPageSearching(pageNo){
 				console.log(requiredData);
 				redisClient.hmset("REQUIRED_EMAILS", requiredData);
 				redisClient.set("LAST_PAGE", pageNo, function(error){
-					if(pageNo < 10){
+					if(pageNo < 10000){
 						pageNo = pageNo + 1;
 						startPageSearching(pageNo);
 					}
