@@ -81,7 +81,7 @@ function fetchUserPage(userId){
 }
 
 
-function startPageSearching(pageNo){
+function startPageSearching(pageNo, callback){
 	return fetchSearchPage(pageNo).then(function(body){
 		//console.log(body);
 		var isMatching = searchPageRegex.exec(body);
@@ -101,21 +101,11 @@ function startPageSearching(pageNo){
 				console.log(requiredData);
 				redisClient.hmset("REQUIRED_EMAILS", requiredData);
 				redisClient.set("LAST_PAGE", pageNo, function(error){
-					if(pageNo < pageLimit){
-						pageNo = pageNo + 1;
-						startPageSearching(pageNo);
-					}else{
-						 console.log("limit crossed")
-					}
+					callback(null, pageNo);
 				});
 			}else{
 				redisClient.set("LAST_PAGE", pageNo, function(error){
-					if(pageNo < pageLimit){
-						pageNo = pageNo + 1;
-						startPageSearching(pageNo);
-					}else{
-						 console.log("limit crossed")
-					}
+					callback(null, pageNo);
 				});
 			}
 			
@@ -124,6 +114,7 @@ function startPageSearching(pageNo){
 
 	}).catch(function(error){
 		console.log(error);
+		callback(error, null);
 	});
 };
 
@@ -163,11 +154,29 @@ function fetchUserFunction(userId, callback){
 
 var start = 0;
 var pageLimit = 10000;
-if(process.argv.length > 1){
+if(process.argv.length > 2){
 	start = process.argv[2];
 	start = parseInt(start);
 }
-startPageSearching(start);
+async.whilst(
+	function(){return start < pageLimit},
+	function(callback){
+		startPageSearching(start,function(error, pageNo){
+			if(!error){
+				start = pageNo + 1;
+				callback(null, start);
+			}
+		});
+	},
+	function(error){
+		if(error){
+			console.log("Error", error);
+		}else{
+			console.log("completed===========>");
+		}
+	}
+);
+
 // fetchUserFunction(3946270);
 
 
