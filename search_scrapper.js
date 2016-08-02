@@ -101,16 +101,20 @@ function startPageSearching(pageNo){
 				console.log(requiredData);
 				redisClient.hmset("REQUIRED_EMAILS", requiredData);
 				redisClient.set("LAST_PAGE", pageNo, function(error){
-					if(pageNo < limit){
+					if(pageNo < pageLimit){
 						pageNo = pageNo + 1;
 						startPageSearching(pageNo);
+					}else{
+						 console.log("limit crossed")
 					}
 				});
 			}else{
 				redisClient.set("LAST_PAGE", pageNo, function(error){
-					if(pageNo < limit){
+					if(pageNo < pageLimit){
 						pageNo = pageNo + 1;
 						startPageSearching(pageNo);
+					}else{
+						 console.log("limit crossed")
 					}
 				});
 			}
@@ -158,7 +162,7 @@ function fetchUserFunction(userId, callback){
 }
 
 var start = 0;
-var limit = 10000;
+var pageLimit = 10000;
 if(process.argv.length > 1){
 	start = process.argv[2];
 	start = parseInt(start);
